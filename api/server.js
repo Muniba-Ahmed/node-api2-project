@@ -9,7 +9,7 @@ server.use(express.json());
 
 const postsRouter = require("./posts/posts-router");
 
-const Posts = require("./posts/posts-model");
+// const Posts = require("./posts/posts-model");
 
 server.use("/api/posts", postsRouter);
 

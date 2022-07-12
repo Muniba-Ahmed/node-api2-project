@@ -63,7 +63,65 @@ router.post("/", (req, res) => {
   }
 });
 // 4	PUT	/api/posts/:id	Updates the post with the specified id using data from the request body and returns the modified document, not the original
-router.put("/:id", (req, res) => {});
+router.put("/:id", (req, res) => {
+  //   try {
+  //     const possiblePost = await Posts.findById(req.params.id);
+  //     if (!possiblePost) {
+  //       res
+  //         .status(404)
+  //         .json({ message: "The post with the specified ID does not exist" });
+  //     } else {
+  //       const body = req.body;
+  //       if (!body.title || !body.contents) {
+  //         res
+  //           .status(400)
+  //           .json({ message: "Please provide title and contents for the post" });
+  //       } else {
+  //         const updatedPost = await Posts.update(req.params.id, req.body);
+  //         res.status(200).json(updatedPost);
+  //       }
+  //     }
+  //   } catch (err) {
+  //     res.status(500).json({
+  //       message: "The post information could not be modified",
+  //       err: err.message,
+  //       stack: err.stack,
+  //     });
+  //   }
+  const body = req.body;
+  if (!body.title || !body.contents) {
+    res
+      .status(400)
+      .json({ message: "Please provide title and contents for the post" });
+  } else {
+    Posts.findById(req.params.id)
+      .then((post) => {
+        if (!post) {
+          res
+            .status(404)
+            .json({ message: "The post with the specified ID does not exist" });
+        } else {
+          return Posts.update(req.params.id, req.body);
+        }
+      })
+      .then((post) => {
+        if (post) {
+          return Posts.findById(req.params.id);
+        }
+      })
+      .then((post) => {
+        res.status(200).json(post);
+      })
+      .catch((err) => {
+        res.status(500).json({
+          message: "The post information could not be modified",
+          err: err.message,
+          stack: err.stack,
+        });
+      });
+  }
+});
+
 // 5	DELETE	/api/posts/:id	Removes the post with the specified id and returns the deleted post object
 router.delete("/:id", async (req, res) => {
   try {
