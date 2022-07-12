@@ -1,12 +1,23 @@
 // implement your posts router here
 const express = require("express");
 
-const Posts = require("./posts/posts-model");
+const Posts = require("./posts-model");
 
 const router = express.Router();
 
 // 1	GET	/api/posts	Returns an array of all the post objects contained in the database
-router.get("/", (req, res) => {});
+router.get("/", (req, res) => {
+  Posts.find(req.query)
+    .then((post) => {
+      res.status(200).json(post);
+    })
+    .catch((err) => {
+      console.log(err);
+      res
+        .status(500)
+        .json({ message: "The posts information could not be retrieved" });
+    });
+});
 // 2	GET	/api/posts/:id	Returns the post object with the specified id
 router.get("/:id", (req, res) => {});
 // 3	POST	/api/posts	Creates a post using the information sent inside the request body and returns the newly created post object
